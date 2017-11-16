@@ -358,8 +358,8 @@ class TahrirDatabase(object):
         else:
             # Return badges matching any of the tags
             for tag in tags or ():
-                badges.extend(self.session.query(Badge) \
-                      .filter(func.lower(Badge.tags).contains(str(tag + ',').lower())).all())
+                badges.extend(self.session.query(Badge)
+                              .filter(func.lower(Badge.tags).contains(str(tag + ',').lower())).all())
 
         # Eliminate any duplicates.
         unique_badges = list()
@@ -768,7 +768,8 @@ class TahrirDatabase(object):
         """
 
         if self.person_exists(email=person_email):
-            person_id = self.session.query(Person).filter_by(email=person_email).one().id
+            person_id = self.session.query(Person)\
+                            .filter_by(email=person_email).one().id
             return self.session.query(Assertion).filter_by(person_id=person_id).all()
         else:
             return False
@@ -843,11 +844,7 @@ class TahrirDatabase(object):
         return False
 
     @autocommit
-    def add_assertion(self,
-                      badge_id,
-                      person_email,
-                      issued_on,
-                      issued_for=None):
+    def add_assertion(self, badge_id, person_email, issued_on, issued_for=None):
         """
         Add an assertion (award a badge) to the database
 
@@ -858,8 +855,7 @@ class TahrirDatabase(object):
         :param person_email: Email of the Person to issue the badge to
 
         :type issued_on: DateTime
-        :param issued_on: DateTime object holding the date the badge was issued
-        on
+        :param issued_on: DateTime object holding the date the badge was issued on
 
         :type issued_for: str
         :param issued_for: An optional link back to the warranting event
@@ -869,7 +865,6 @@ class TahrirDatabase(object):
             issued_on = datetime.utcnow()
 
         if self.person_exists(email=person_email) and self.badge_exists(badge_id):
-
             badge = self.get_badge(badge_id)
             person = self.get_person(person_email)
             old_rank = person.rank
