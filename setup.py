@@ -19,12 +19,16 @@ def _read(fname):
 
 
 setup(
-    name='tahrir-api',
+    name='nti.tahrir-api',
     version=_read('version.txt').strip(),
     author='Ross Delinger',
     author_email='rdelinge@redhat.com',
     description="An API for interacting with the Tahrir database",
-    long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
+    long_description=(
+        _read('README.rst')
+        + '\n\n'
+        + _read("CHANGES.rst")
+    ),
     license="GPLv3+",
     keywords='web sqlalchemy api',
     classifiers=[
@@ -47,6 +51,7 @@ setup(
     packages=find_packages("src"),
     package_dir={'': 'src'},
     include_package_data=True,
+    namespace_packages=['tahrir-api'],
     install_requires=[
         'setuptools',
         'alembic',
