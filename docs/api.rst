@@ -5,14 +5,14 @@
 DB API
 ======
 
-.. automodule:: tahrir-api.dbapi
+.. automodule:: tahrir_api.dbapi
 
 Model
 =====
 
-.. automodule:: tahrir-api.model
+.. automodule:: tahrir_api.model
 
 Utilities
 =========
 
-.. automodule:: tahrir-api.utils
+.. automodule:: tahrir_api.utils
