@@ -18,14 +18,14 @@ from hamcrest import has_property
 
 import unittest
 
+from subprocess import check_output as _check_output
+
 from sqlalchemy import create_engine
 
 from tahrir_api.dbapi import TahrirDatabase
 
 from tahrir_api.model import DBSession
 from tahrir_api.model import DeclarativeBase
-
-from subprocess import check_output as _check_output
 
 metadata = getattr(DeclarativeBase, 'metadata')
 
@@ -130,7 +130,8 @@ class TestDBInit(unittest.TestCase):
             "TestOrg",
             "TestContact"
         )
-        assert_that(self.api.issuer_exists("TestOrigin", "TestName"), is_(True))
+        assert_that(self.api.issuer_exists(
+            "TestOrigin", "TestName"), is_(True))
 
     def test_add_invitation(self):
         badge_id = self.api.add_badge(
@@ -174,7 +175,7 @@ class TestDBInit(unittest.TestCase):
         assert_that(self.api.assertion_exists(badge_id, email), is_(True))
 
         badge = self.api.get_badge(badge_id)
-        assert_that(badge, 
+        assert_that(badge,
                     has_property('assertions', has_length(1)))
         assert_that(badge.assertions[0],
                     has_property('issued_for', is_('link')))
@@ -183,7 +184,8 @@ class TestDBInit(unittest.TestCase):
         assert_that(self.callback_calls, has_length(2))
 
         # Ensure that the first message had a 'badge_id' in the message.
-        assert_that('badge_id', is_in(self.callback_calls[0][1]['msg']['badge']))
+        assert_that('badge_id', 
+                    is_in(self.callback_calls[0][1]['msg']['badge']))
 
     def test_get_badges_from_tags(self):
         issuer_id = self.api.add_issuer(

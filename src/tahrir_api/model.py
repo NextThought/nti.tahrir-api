@@ -129,7 +129,6 @@ class Badge(DeclarativeBase):
         for authz in self.authorizations:
             if authz.person == person:
                 return True
-
         return False
 
 
