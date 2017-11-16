@@ -50,7 +50,6 @@ class TestModel(BaseTahrirTest):
                     is_('my-id'))
 
     def test_badge(self):
-        self.api.autocommit = False
         issuer_id = self.api.add_issuer(
             "http://bleach.org",
             "aizen",
@@ -87,9 +86,10 @@ class TestModel(BaseTahrirTest):
 
         self.api.add_authorization(badge_id, 'hinamori@bleach.org')
 
+        # get badge due to autocommit
+        badge = self.api.get_badge(badge_id)
         assert_that(badge.authorized('izuru@bleach.org'),
                     is_(False))
         person = self.api.get_person('hinamori@bleach.org')
         assert_that(badge.authorized(person),
                     is_(True))
-        self.api.autocommit = True
