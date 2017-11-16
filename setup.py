@@ -51,7 +51,6 @@ setup(
     packages=find_packages("src"),
     package_dir={'': 'src'},
     include_package_data=True,
-    namespace_packages=['tahrir-api'],
     install_requires=[
         'setuptools',
         'alembic',
