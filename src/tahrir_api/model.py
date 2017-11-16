@@ -49,14 +49,21 @@ DeclarativeBase.query = DBSession.query_property()
 
 
 class Issuer(DeclarativeBase):
+
     __tablename__ = 'issuers'
 
     id = Column(Integer, unique=True, primary_key=True)
+
     origin = Column(Unicode(128), nullable=False)
+
     name = Column(Unicode(128), nullable=False, unique=True)
+
     org = Column(Unicode(128), nullable=False)
+
     contact = Column(Unicode(128), nullable=False)
+
     badges = relationship("Badge", backref="issuer")
+
     created_on = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
 
@@ -82,21 +89,34 @@ def generate_default_id(context):
 
 
 class Badge(DeclarativeBase):
+
     __tablename__ = 'badges'
 
     id = Column(Unicode(128), primary_key=True, default=generate_default_id)
+
     name = Column(Unicode(128), nullable=False, unique=True)
+
     image = Column(Unicode(128), nullable=False)
+
     stl = Column(Unicode(128))
+
     description = Column(Unicode(128), nullable=False)
+
     criteria = Column(Unicode(128), nullable=False)
+
     issuer_id = Column(Integer, ForeignKey('issuers.id'), nullable=False)
+
     milestone = relationship("Milestone", backref="badge")
+
     authorizations = relationship("Authorization", backref="badge")
+
     assertions = relationship("Assertion", backref="badge")
+
     invitations = relationship("Invitation", backref="badge")
+
     created_on = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
+
     tags = Column(Unicode(128))
 
     def __repr__(self):
@@ -107,10 +127,8 @@ class Badge(DeclarativeBase):
     __unicode__ = __str__
 
     def __json__(self):
-        if self.image.startswith("http"):
-            image = self.image
-        else:
-            image = "/pngs/" + self.image
+        image = self.image
+        image = "/pngs/" + image if not image.startswith("http") else image
         return dict(
             version="0.5.0",
             image=image,

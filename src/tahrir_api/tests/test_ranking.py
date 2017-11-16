@@ -10,23 +10,16 @@ from __future__ import absolute_import
 
 from hamcrest import is_
 from hamcrest import none
-from hamcrest import is_in
 from hamcrest import has_entry
 from hamcrest import assert_that
 from hamcrest import has_property
 
-import unittest
 import datetime
 
-from subprocess import check_output as _check_output
-
-from sqlalchemy import create_engine
-
-from tahrir_api.dbapi import TahrirDatabase
-
 from tahrir_api.model import Assertion
-from tahrir_api.model import DBSession
 from tahrir_api.model import DeclarativeBase
+
+from tahrir_api.tests import BaseTahrirTest
 
 metadata = getattr(DeclarativeBase, 'metadata')
 
@@ -36,22 +29,7 @@ one_week_ago = now - datetime.timedelta(days=7)
 one_month_ago = now - datetime.timedelta(weeks=4)
 
 
-def check_output(cmd):
-    try:
-        return _check_output(cmd)
-    except Exception:
-        return None
-
-
-def assert_in(member, container):
-    """ 
-    Just like assertTrue(a in b), but with a nicer default message. 
-    """
-    assert_that(member,  is_in(container),
-                '%r not found in %r' % (member, container))
-
-
-class TestRanking(unittest.TestCase):
+class TestRanking(BaseTahrirTest):
 
     def _create_test_data(self):
         issuer_id = self.api.add_issuer(
@@ -91,17 +69,8 @@ class TestRanking(unittest.TestCase):
         self.api.add_person(self.email_4)
 
     def setUp(self):
-        check_output(['touch', 'testdb.db'])
-        sqlalchemy_uri = "sqlite:///testdb.db"
-        engine = create_engine(sqlalchemy_uri)
-        DBSession.configure(bind=engine)
-        metadata.create_all(engine)
-
-        self.api = TahrirDatabase(sqlalchemy_uri)
+        super(TestRanking, self).setUp()
         self._create_test_data()
-
-    def tearDown(self):
-        check_output(['rm', 'testdb.db'])
 
     def test_ranking_simple(self):
         self.api.add_assertion(self.badge_id_1, self.email_1, None)
