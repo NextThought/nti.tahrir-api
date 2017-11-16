@@ -151,11 +151,15 @@ class Badge(DeclarativeBase):
 
 
 class Team(DeclarativeBase):
+
     __tablename__ = "team"
 
     id = Column(Unicode(128), primary_key=True, default=generate_default_id)
+
     name = Column(Unicode(128), nullable=False, unique=True)
+
     series = relationship("Series", backref="team")
+
     created_on = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
 
@@ -175,18 +179,25 @@ class Team(DeclarativeBase):
 
 
 class Series(DeclarativeBase):
+
     __tablename__ = 'series'
 
     id = Column(Unicode(128), primary_key=True, default=generate_default_id)
+
     name = Column(Unicode(128), nullable=False, unique=True)
+
     description = Column(Unicode(128), nullable=False)
+
     created_on = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
+
     last_updated = Column(DateTime, nullable=False,
                           default=datetime.datetime.utcnow,
                           onupdate=datetime.datetime.utcnow)
     tags = Column(Unicode(128))
+ 
     milestone = relationship("Milestone", backref="series")
+
     team_id = Column(Unicode(128), ForeignKey('team.id'), nullable=False)
 
     def __repr__(self):
@@ -207,14 +218,19 @@ class Series(DeclarativeBase):
 
 
 class Milestone(DeclarativeBase):
+    
     __tablename__ = 'milestone'
+
     __table_args__ = (
         UniqueConstraint('position', 'badge_id', 'series_id'),
     )
 
     id = Column(Integer, unique=True, primary_key=True)
+
     position = Column(Integer, default=None)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     series_id = Column(Unicode(128), ForeignKey('series.id'), nullable=False)
 
     def __repr__(self):

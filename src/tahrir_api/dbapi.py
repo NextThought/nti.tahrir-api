@@ -203,8 +203,7 @@ class TahrirDatabase(object):
         :type series_id: str
         :param series_id: The ID of the series
         """
-        return self.get_milestone_from_badge_series(badge_id,
-                                                    series_id).count() != 0
+        return self.get_milestone_from_badge_series(badge_id, series_id).count() != 0
 
     def get_milestone_from_badge_series(self, badge_id, series_id):
         """
@@ -227,8 +226,10 @@ class TahrirDatabase(object):
         :type milestone_id: str
         :param milestone_id: The ID of a Milestone
         """
-        return self.session.query(Milestone) \
-                   .filter(Milestone.id == milestone_id)
+        if self.milestone_exists(milestone_id):
+            return self.session.query(Milestone) \
+                       .filter(Milestone.id == milestone_id).first()
+        return None
 
     def get_all_milestones(self, series_id):
         """
