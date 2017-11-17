@@ -245,18 +245,28 @@ class Milestone(DeclarativeBase):
 
 
 class Person(DeclarativeBase):
+
     __tablename__ = 'persons'
 
     id = Column(Integer, unique=True, primary_key=True)
+
     email = Column(Unicode(128), nullable=False, unique=True)
+
     authorizations = relationship("Authorization", backref="person")
+
     assertions = relationship("Assertion", backref="person")
+
     nickname = Column(Unicode(128), unique=True)
+
     website = Column(Unicode(128))
+
     bio = Column(Unicode(140))
+
     created_on = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
+
     last_login = Column(DateTime, nullable=True, default=None)
+
     opt_out = Column(Boolean, nullable=False, default=False)
 
     # An integer that organizes the users by the number of
@@ -270,8 +280,9 @@ class Person(DeclarativeBase):
     @property
     def gravatar_link(self):
         d, s = 'mm', 24
-        digest = hashlib.md5(self.email).hexdigest()
-        url = "http://www.gravatar.com/avatar/%s?s=%i&d=%s" % (digest, s, d)
+        email = bytes_(self.email)
+        digest = hashlib.md5(email).hexdigest()
+        url = "https://www.gravatar.com/avatar/%s?s=%i&d=%s" % (digest, s, d)
         return url
 
     def __str__(self):
@@ -310,9 +321,13 @@ class Invitation(DeclarativeBase):
         Unicode(32), primary_key=True, unique=True,
         default=invitation_id_default,
     )
+
     created_on = Column(DateTime, nullable=False)
+
     expires_on = Column(DateTime, nullable=False)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     created_by = Column(Integer, ForeignKey('persons.id'),
                         nullable=False)
 
@@ -326,10 +341,13 @@ class Invitation(DeclarativeBase):
 
 
 class Authorization(DeclarativeBase):
+
     __tablename__ = 'authorizations'
 
     id = Column(Integer, primary_key=True)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     person_id = Column(Integer, ForeignKey('persons.id'), nullable=False)
 
     def __repr__(self):
@@ -355,13 +373,18 @@ def assertion_id_default(context):
 
 
 class Assertion(DeclarativeBase):
+
     __tablename__ = 'assertions'
 
     id = Column(Unicode(128), primary_key=True, unique=True,
                 default=assertion_id_default)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     person_id = Column(Integer, ForeignKey('persons.id'), nullable=False)
+
     salt = Column(Unicode(128), nullable=False, default=salt_default)
+
     issued_on = Column(DateTime, nullable=False,
                        default=datetime.datetime.utcnow)
 
@@ -393,14 +416,15 @@ class Assertion(DeclarativeBase):
         return result
 
     def __getitem__(self, key):
-        if key not in ("pygments", "delete"):
+        if key not in ("pygments",):
             raise KeyError
         return getattr(self, "__{0}__".format(key))()
 
-    def __delete__(self):
-        return lambda: DBSession.delete(self)
-
     def __pygments__(self):
+        # load lexers & formatters
+        tuple(lexers.get_all_lexers())
+        tuple(formatters.get_all_formatters())
+        # ready to format
         HtmlFormatter = formatters.html.HtmlFormatter
         JavascriptLexer = lexers.javascript.JavascriptLexer
         html_args = {'full': False}

@@ -631,7 +631,7 @@ class TahrirDatabase(object):
 
         created_on = created_on or datetime.utcnow()
         expires_on = expires_on or (created_on + timedelta(hours=1))
-        if self.person_exists(email=created_by_email):
+        if created_by_email and self.person_exists(email=created_by_email):
             created_by = self.get_person(created_by_email).id
         else:
             created_by = "1"
@@ -822,6 +822,23 @@ class TahrirDatabase(object):
             return False
         return self.session.query(Authorization) \
                    .filter_by(person_id=person.id, badge_id=badge_id).count() != 0
+
+    def get_authorization(self, badge_id, email):
+        """
+        Returns an authorization from the database
+
+        :type badge_id: str
+        :param badge_id: ID of the badge
+
+        :type email: str
+        :param email: user's email
+        """
+
+        person = self.get_person(email)
+        if not person:
+            return None
+        return self.session.query(Authorization) \
+                   .filter_by(person_id=person.id, badge_id=badge_id).one()
 
     @autocommit
     def add_authorization(self, badge_id, person_email):

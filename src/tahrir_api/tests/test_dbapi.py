@@ -14,7 +14,11 @@ from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import instance_of
+from hamcrest import starts_with
 from hamcrest import has_property
+
+import six
 
 from tahrir_api.tests import BaseTahrirTest
 
@@ -82,8 +86,18 @@ class TestDBInit(BaseTahrirTest):
         assert_that(self.api.milestone_exists(milestone_id_2), is_(True))
 
     def test_add_person(self):
-        self.api.add_person("test@tester.com")
+        self.api.add_person("test@tester.com", "the_main_tester")
         assert_that(self.api.person_exists("test@tester.com"), is_(True))
+
+        person = self.api.get_person("test@tester.com")
+        assert_that(person, is_not(none()))
+
+        person = self.api.get_person(nickname="the_main_tester")
+        assert_that(person, is_not(none()))
+        person_id = person.id
+
+        person = self.api.get_person(id=person_id)
+        assert_that(person, is_not(none()))
 
     def test_add_issuer(self):
         _id = self.api.add_issuer(
@@ -92,7 +106,7 @@ class TestDBInit(BaseTahrirTest):
             "TestOrg",
             "TestContact"
         )
-        assert_that(self.api.issuer_exists("TestOrigin", "TestName"), 
+        assert_that(self.api.issuer_exists("TestOrigin", "TestName"),
                     is_(True))
 
     def test_add_invitation(self):
@@ -139,14 +153,25 @@ class TestDBInit(BaseTahrirTest):
         badge = self.api.get_badge(badge_id)
         assert_that(badge,
                     has_property('assertions', has_length(1)))
-        assert_that(badge.assertions[0],
+        assertion = badge.assertions[0]
+        repr(assertion)  # coverage
+        assert_that(assertion,
                     has_property('issued_for', is_('link')))
+        assert_that(str(assertion),
+                    is_('TestBadge<->test@tester.com'))
+        assert_that(assertion,
+                    has_property('_recipient', starts_with('sha256$')))
+
+        with self.assertRaises(KeyError):
+            assertion['key']
+        assert_that(assertion['pygments'],
+                    is_(instance_of(six.string_types)))
 
         # Ensure that we would have published two fedmsg messages for that.
         assert_that(self.callback_calls, has_length(2))
 
         # Ensure that the first message had a 'badge_id' in the message.
-        assert_that('badge_id', 
+        assert_that('badge_id',
                     is_in(self.callback_calls[0][1]['msg']['badge']))
 
     def test_get_badges_from_tags(self):
