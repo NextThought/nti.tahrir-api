@@ -558,17 +558,14 @@ class TahrirDatabase(object):
         """
 
         if not self.person_exists(email=email):
-
             # If no nickname is specified, just use the first bit of their
             # email as a convenient default.
             if not nickname:
                 nickname = email.split('@')[0]
-
             new_person = Person(email=email, nickname=nickname,
                                 website=website, bio=bio)
             self.session.add(new_person)
             self.session.flush()
-
             return email
         return False
 
@@ -577,9 +574,7 @@ class TahrirDatabase(object):
         """ 
         Make a note that a person has logged in. 
         """
-
         person = self.get_person(person_email, id, nickname)
-
         # If this is the first time they have ever logged in, optionally
         # publish a notification about the event.
         if not person.last_login and self.notification_callback:
@@ -592,7 +587,6 @@ class TahrirDatabase(object):
                     )
                 )
             )
-
         # Finally, update the field.
         person.last_login = datetime.utcnow()
 
@@ -603,7 +597,6 @@ class TahrirDatabase(object):
         :type issuer_id: int
         :param issuer_id: The unique ID of this issuer
         """
-
         return self.session.query(Issuer).filter_by(origin=origin, name=name).count() != 0
 
     @autocommit
@@ -653,14 +646,12 @@ class TahrirDatabase(object):
         :type invitation_id: str
         :param invitation_id: The unique ID of this invitation
         """
-
         return self.session.query(Invitation).filter_by(id=invitation_id).count() != 0
 
     def get_all_invitations(self):
         """
         Get all invitations in the db.
         """
-
         return self.session.query(Invitation)
 
     def get_invitation(self, invitation_id):
@@ -670,11 +661,9 @@ class TahrirDatabase(object):
         :type invitation_id: str
         :param invitation_id: The unique ID of this invitation
         """
-
         if self.invitation_exists(invitation_id):
             return self.session.query(Invitation).filter_by(id=invitation_id).one()
-        else:
-            return False
+        return None
 
     def get_invitations(self, person_id):
         """
@@ -684,7 +673,6 @@ class TahrirDatabase(object):
         :param issuer_id: The person ID for which inviations
                           will be retrieved.
         """
-
         return self.session.query(Invitation).filter_by(created_by=person_id).all()
 
     def get_issuer(self, issuer_id):
@@ -707,7 +695,6 @@ class TahrirDatabase(object):
         :type issuer_id: int
         :param issuer_id: ID of the issuer to be delete
         """
-
         query = self.session.query(Issuer).filter_by(id=issuer_id)
         if query.count() > 0:
             to_delete = query.one()
@@ -733,7 +720,6 @@ class TahrirDatabase(object):
         :type contact: str
         :param contact: The Contact email for this issuer
         """
-
         if not self.issuer_exists(origin, name):
             new_issuer = Issuer(
                 origin=origin,
