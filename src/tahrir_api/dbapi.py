@@ -631,7 +631,7 @@ class TahrirDatabase(object):
 
         created_on = created_on or datetime.utcnow()
         expires_on = expires_on or (created_on + timedelta(hours=1))
-        if self.person_exists(email=created_by_email):
+        if created_by_email and self.person_exists(email=created_by_email):
             created_by = self.get_person(created_by_email).id
         else:
             created_by = "1"

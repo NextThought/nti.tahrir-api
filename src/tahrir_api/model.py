@@ -321,9 +321,13 @@ class Invitation(DeclarativeBase):
         Unicode(32), primary_key=True, unique=True,
         default=invitation_id_default,
     )
+
     created_on = Column(DateTime, nullable=False)
+
     expires_on = Column(DateTime, nullable=False)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     created_by = Column(Integer, ForeignKey('persons.id'),
                         nullable=False)
 
@@ -337,10 +341,13 @@ class Invitation(DeclarativeBase):
 
 
 class Authorization(DeclarativeBase):
+
     __tablename__ = 'authorizations'
 
     id = Column(Integer, primary_key=True)
+
     badge_id = Column(Unicode(128), ForeignKey('badges.id'), nullable=False)
+
     person_id = Column(Integer, ForeignKey('persons.id'), nullable=False)
 
     def __repr__(self):

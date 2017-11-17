@@ -11,9 +11,12 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import raises
+from hamcrest import calling
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+from hamcrest import has_property
 
 import fudge
 
@@ -166,3 +169,59 @@ class TestModel(BaseTahrirTest):
 
         assert_that(self.api.get_milestone_from_badge_series(badge_id, series_id),
                     is_not(none()))
+
+    def test_person(self):
+        self.api.add_person("aizen@bleach.org", "aizen")
+        person = self.api.get_person("aizen@bleach.org")
+        assert_that(person, is_not(none()))
+        repr(person)
+        assert_that(str(person), is_('aizen@bleach.org'))
+        person_id = person.id
+        assert_that(person.__json__(),
+                    has_entries('id', person_id,
+                                'bio', is_(none()),
+                                'rank', is_(none()),
+                                'nickname', 'aizen',
+                                'website', is_(none()),
+                                'email', "aizen@bleach.org"))
+
+        assert_that(self.api.get_person_email(person_id),
+                    is_('aizen@bleach.org'))
+
+        assert_that(person.gravatar_link,
+                    is_('https://www.gravatar.com/avatar/e6ec20e4670cb11aa5759fed7974757b?s=24&d=mm'))
+
+    def test_invitation(self):
+        issuer_id = self.api.add_issuer(
+            "http://bleach.org",
+            "aizen",
+            "Bleach",
+            "aizen@bleach.org"
+        )
+
+        badge_id = self.api.add_badge(
+            "kido",
+            "kido",
+            "A test badge for doing kido",
+            "kido-expert",
+            issuer_id,
+        )
+        inv_id = self.api.add_invitation(badge_id)
+        invitation = self.api.get_invitation(inv_id)
+        assert_that(invitation, is_not(none()))
+
+        assert_that(invitation.expired, is_(False))
+        assert_that(invitation.expires_on_relative,
+                    is_('in an hour'))
+
+        assert_that(calling(self.api.add_invitation).with_args('000'),
+                    raises(ValueError))
+
+        self.api.add_person("ichigo@bleach.org", "ichigo")
+        person = self.api.get_person("ichigo@bleach.org")
+
+        inv_id = self.api.add_invitation(
+            badge_id, created_by_email="ichigo@bleach.org")
+        invitation = self.api.get_invitation(inv_id)
+        assert_that(invitation,
+                    has_property('created_by', is_(person.id)))

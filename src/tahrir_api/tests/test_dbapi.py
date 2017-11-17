@@ -82,8 +82,18 @@ class TestDBInit(BaseTahrirTest):
         assert_that(self.api.milestone_exists(milestone_id_2), is_(True))
 
     def test_add_person(self):
-        self.api.add_person("test@tester.com")
+        self.api.add_person("test@tester.com", "the_main_tester")
         assert_that(self.api.person_exists("test@tester.com"), is_(True))
+
+        person = self.api.get_person("test@tester.com")
+        assert_that(person, is_not(none()))
+
+        person = self.api.get_person(nickname="the_main_tester")
+        assert_that(person, is_not(none()))
+        person_id = person.id
+
+        person = self.api.get_person(id=person_id)
+        assert_that(person, is_not(none()))
 
     def test_add_issuer(self):
         _id = self.api.add_issuer(
@@ -92,7 +102,7 @@ class TestDBInit(BaseTahrirTest):
             "TestOrg",
             "TestContact"
         )
-        assert_that(self.api.issuer_exists("TestOrigin", "TestName"), 
+        assert_that(self.api.issuer_exists("TestOrigin", "TestName"),
                     is_(True))
 
     def test_add_invitation(self):
@@ -146,7 +156,7 @@ class TestDBInit(BaseTahrirTest):
         assert_that(self.callback_calls, has_length(2))
 
         # Ensure that the first message had a 'badge_id' in the message.
-        assert_that('badge_id', 
+        assert_that('badge_id',
                     is_in(self.callback_calls[0][1]['msg']['badge']))
 
     def test_get_badges_from_tags(self):
