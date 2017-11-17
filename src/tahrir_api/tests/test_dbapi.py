@@ -12,18 +12,30 @@ from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_in
 from hamcrest import is_not
+from hamcrest import equal_to
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import instance_of
 from hamcrest import starts_with
 from hamcrest import has_property
+from hamcrest.library.collection.is_empty import empty as is_empty
 
 import six
+
+import fudge
+
+from tahrir_api.dbapi import TahrirDatabase
 
 from tahrir_api.tests import BaseTahrirTest
 
 
 class TestDBInit(BaseTahrirTest):
+
+    def test_ctor(self):
+        with self.assertRaises(ValueError):
+            TahrirDatabase()
+        with self.assertRaises(ValueError):
+            TahrirDatabase('uri', fudge.Fake())
 
     def test_add_badges(self):
         self.api.add_badge(
@@ -34,7 +46,14 @@ class TestDBInit(BaseTahrirTest):
             1337
         )
 
-        assert self.api.badge_exists("testbadge") is True
+        assert_that(self.api.badge_exists("testbadge"),
+                    is_(True))
+
+        assert_that(self.api.delete_badge('xxxx'),
+                    is_(False))
+
+        assert_that(self.api.delete_badge('testbadge'),
+                    is_('testbadge'))
 
     def test_add_team(self):
         self.api.create_team("TestTeam")
@@ -49,6 +68,9 @@ class TestDBInit(BaseTahrirTest):
                                "test, series")
 
         assert_that(self.api.series_exists("testseries"), is_(True))
+
+        assert_that(list(self.api.get_all_series()),
+                    has_length(1))
 
     def test_add_milestone(self):
         team_id = self.api.create_team("TestTeam")
@@ -99,8 +121,32 @@ class TestDBInit(BaseTahrirTest):
         person = self.api.get_person(id=person_id)
         assert_that(person, is_not(none()))
 
+        assert_that(self.api.add_person("test@tester.com", "the_main_tester"),
+                    is_(False))
+        
+        assert_that(self.api.person_exists(),
+                    is_(False))
+
+        assert_that(self.api.person_opted_out('test2@tester.org'),
+                    is_(False))
+
+        assert_that(self.api.person_opted_out('test@tester.com'),
+                    is_(False))
+        
+        assert_that(list(self.api.get_all_persons()),
+                    has_length(1))
+        
+        assert_that(self.api.get_person_email('xxx'),
+                    is_(none()))
+        
+        assert_that(self.api.delete_person('test2@tester.org'),
+                    is_(False))
+        
+        assert_that(self.api.delete_person('test@tester.com'),
+                    is_('test@tester.com'))
+
     def test_add_issuer(self):
-        _id = self.api.add_issuer(
+        issuer_id = self.api.add_issuer(
             "TestOrigin",
             "TestName",
             "TestOrg",
@@ -108,6 +154,23 @@ class TestDBInit(BaseTahrirTest):
         )
         assert_that(self.api.issuer_exists("TestOrigin", "TestName"),
                     is_(True))
+        
+        assert_that(self.api.delete_issuer('xxxx'),
+                    is_(False))
+    
+        other_id = self.api.add_issuer(
+            "TestOrigin",
+            "TestName",
+            "TestOrg",
+            "TestContact"
+        )
+        assert_that(other_id, is_(equal_to(issuer_id)))
+        
+        assert_that(list(self.api.get_all_issuers()),
+                    has_length(1))
+
+        assert_that(self.api.delete_issuer(issuer_id),
+                    is_(issuer_id))
 
     def test_add_invitation(self):
         badge_id = self.api.add_badge(
@@ -150,6 +213,21 @@ class TestDBInit(BaseTahrirTest):
         self.api.add_assertion(badge_id, email, None, 'link')
         assert_that(self.api.assertion_exists(badge_id, email), is_(True))
 
+        assert_that(list(self.api.get_all_assertions()),
+                    has_length(1))
+        
+        assert_that(list(self.api.get_assertions_by_email("test@tester.com")),
+                    has_length(1))
+
+        assert_that(list(self.api.get_assertions_by_email("test2@tester.org")),
+                    is_(is_empty()))
+
+        assert_that(self.api.get_assertions_by_badge('xxx'),
+                    is_(is_empty()))
+
+        assert_that(self.api.get_assertions_by_badge(badge_id),
+                    is_not(is_empty()))
+
         badge = self.api.get_badge(badge_id)
         assert_that(badge,
                     has_property('assertions', has_length(1)))
@@ -173,6 +251,12 @@ class TestDBInit(BaseTahrirTest):
         # Ensure that the first message had a 'badge_id' in the message.
         assert_that('badge_id',
                     is_in(self.callback_calls[0][1]['msg']['badge']))
+
+        assert_that(self.api.assertion_exists(badge_id, "test2@tester.org"),
+                    is_(False))
+        
+        assert_that(self.api.add_assertion('xxxx', "test2@tester.org", None, 'link'),
+                    is_(False))
 
     def test_get_badges_from_tags(self):
         issuer_id = self.api.add_issuer(
