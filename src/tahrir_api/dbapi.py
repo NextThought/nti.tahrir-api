@@ -823,6 +823,23 @@ class TahrirDatabase(object):
         return self.session.query(Authorization) \
                    .filter_by(person_id=person.id, badge_id=badge_id).count() != 0
 
+    def get_authorization(self, badge_id, email):
+        """
+        Returns an authorization from the database
+
+        :type badge_id: str
+        :param badge_id: ID of the badge
+
+        :type email: str
+        :param email: user's email
+        """
+
+        person = self.get_person(email)
+        if not person:
+            return None
+        return self.session.query(Authorization) \
+                   .filter_by(person_id=person.id, badge_id=badge_id).one()
+
     @autocommit
     def add_authorization(self, badge_id, person_email):
         """
