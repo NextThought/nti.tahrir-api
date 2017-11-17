@@ -18,8 +18,7 @@ from hamcrest import assert_that
 from hamcrest import instance_of
 from hamcrest import starts_with
 from hamcrest import has_property
-
-from nti.testing.matchers import is_empty
+from hamcrest.library.collection.is_empty import empty as is_empty
 
 import six
 

@@ -233,18 +233,18 @@ class TestModel(BaseTahrirTest):
         person = self.api.get_person("ichigo@bleach.org")
         person_id = person.id
 
-        inv_id = self.api.add_invitation(badge_id, 
+        inv_id = self.api.add_invitation(badge_id,
                                          created_by_email="ichigo@bleach.org")
         invitation = self.api.get_invitation(inv_id)
         assert_that(invitation,
                     has_property('created_by', is_(person.id)))
-        
+
         assert_that(list(self.api.get_all_invitations()),
                     has_length(2))
-        
+
         assert_that(self.api.get_invitation('xxxx'),
                     is_(none()))
-        
+
         assert_that(list(self.api.get_invitations(person_id)),
                     has_length(2))
 
