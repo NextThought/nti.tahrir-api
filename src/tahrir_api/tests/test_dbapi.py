@@ -20,10 +20,20 @@ from hamcrest import has_property
 
 import six
 
+import fudge
+
+from tahrir_api.dbapi import TahrirDatabase
+
 from tahrir_api.tests import BaseTahrirTest
 
 
 class TestDBInit(BaseTahrirTest):
+
+    def test_ctor(self):
+        with self.assertRaises(ValueError):
+            TahrirDatabase()
+        with self.assertRaises(ValueError):
+            TahrirDatabase('uri', fudge.Fake())
 
     def test_add_badges(self):
         self.api.add_badge(
@@ -34,7 +44,14 @@ class TestDBInit(BaseTahrirTest):
             1337
         )
 
-        assert self.api.badge_exists("testbadge") is True
+        assert_that(self.api.badge_exists("testbadge"),
+                    is_(True))
+
+        assert_that(self.api.delete_badge('xxxx'),
+                    is_(False))
+
+        assert_that(self.api.delete_badge('testbadge'),
+                    is_('testbadge'))
 
     def test_add_team(self):
         self.api.create_team("TestTeam")
@@ -49,6 +66,9 @@ class TestDBInit(BaseTahrirTest):
                                "test, series")
 
         assert_that(self.api.series_exists("testseries"), is_(True))
+
+        assert_that(list(self.api.get_all_series()),
+                    has_length(1))
 
     def test_add_milestone(self):
         team_id = self.api.create_team("TestTeam")

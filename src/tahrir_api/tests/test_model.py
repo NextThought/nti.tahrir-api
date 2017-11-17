@@ -99,6 +99,9 @@ class TestModel(BaseTahrirTest):
         assert_that(badge.authorized(person),
                     is_(True))
 
+        assert_that(list(self.api.get_all_badges()),
+                    has_length(1))
+
     def test_team_series_milestone(self):
         assert_that(self.api.get_team('bankai'), is_(none()))
         team_id = self.api.create_team('bankai')
@@ -169,6 +172,15 @@ class TestModel(BaseTahrirTest):
 
         assert_that(self.api.get_milestone_from_badge_series(badge_id, series_id),
                     is_not(none()))
+
+        assert_that(list(self.api.get_milestone_from_series_ids((series_id,))),
+                    has_length(1))
+
+        assert_that(self.api.get_badges_from_team('000'),
+                    is_(none()))
+
+        assert_that(list(self.api.get_badges_from_team(team_id)),
+                    has_length(1))
 
     def test_person(self):
         self.api.add_person("aizen@bleach.org", "aizen")
@@ -243,17 +255,17 @@ class TestModel(BaseTahrirTest):
         )
         assert_that(self.api.add_authorization(badge_id, 'hinamori@bleach.org'),
                     is_(False))
-        
+
         self.api.add_person("hinamori@bleach.org", "hinamori")
         assert_that(self.api.add_authorization(badge_id, 'hinamori@bleach.org'),
                     is_(('hinamori@bleach.org', badge_id)))
-        
+
         assert_that(self.api.authorization_exists(badge_id, 'hinamori@bleach.org'),
                     is_(True))
 
         assert_that(self.api.authorization_exists(badge_id, 'ichigo@bleach.org'),
                     is_(False))
-        
+
         auth = self.api.get_authorization(badge_id, 'ichigo@bleach.org')
         assert_that(auth, is_(none()))
 
