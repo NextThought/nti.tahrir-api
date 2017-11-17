@@ -264,7 +264,6 @@ class TahrirDatabase(object):
             self.session.add(milestone)
             self.session.flush()
         milestone_id = milestone.id
-
         return milestone_id
 
     def get_milestone_from_series_ids(self, series_ids):
@@ -367,7 +366,6 @@ class TahrirDatabase(object):
         for badge in badges:
             if badge not in unique_badges:
                 unique_badges.append(badge)
-
         return unique_badges
 
     def get_all_badges(self):
@@ -456,8 +454,7 @@ class TahrirDatabase(object):
             return query.filter_by(id=id).count() != 0
         elif nickname:
             return query.filter(func.lower(Person.nickname) == func.lower(nickname)).count() != 0
-        else:
-            return False
+        return False
 
     def person_opted_out(self, email=None, id=None, nickname=None):
         """ 
@@ -521,8 +518,7 @@ class TahrirDatabase(object):
             return query.filter_by(id=id).one()
         elif nickname and self.person_exists(nickname=nickname):
             return query.filter(func.lower(Person.nickname) == func.lower(nickname)).one()
-        else:
-            return None
+        return None
 
     @autocommit
     def delete_person(self, person_email):
@@ -758,8 +754,7 @@ class TahrirDatabase(object):
             person_id = self.session.query(Person)\
                             .filter_by(email=person_email).one().id
             return self.session.query(Assertion).filter_by(person_id=person_id).all()
-        else:
-            return False
+        return ()
 
     def get_assertions_by_badge(self, badge_id):
         """
@@ -768,12 +763,10 @@ class TahrirDatabase(object):
         :type badge_id: str
         :param badge_id: Badge id to get assertions for.
         """
-
         if self.badge_exists(badge_id):
             return self.session.query(Assertion) \
                        .filter(func.lower(Assertion.badge_id) == func.lower(badge_id)).all()
-        else:
-            return False
+        return ()
 
     def assertion_exists(self, badge_id, email):
         """
@@ -785,7 +778,6 @@ class TahrirDatabase(object):
         :type email: str
         :param email: users email
         """
-
         person = self.get_person(email)
         if not person:
             return False
@@ -802,7 +794,6 @@ class TahrirDatabase(object):
         :type email: str
         :param email: user's email
         """
-
         person = self.get_person(email)
         if not person:
             return False
@@ -819,7 +810,6 @@ class TahrirDatabase(object):
         :type email: str
         :param email: user's email
         """
-
         person = self.get_person(email)
         if not person:
             return None
