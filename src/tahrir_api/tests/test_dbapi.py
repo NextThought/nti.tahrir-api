@@ -14,7 +14,11 @@ from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import instance_of
+from hamcrest import starts_with
 from hamcrest import has_property
+
+import six
 
 from tahrir_api.tests import BaseTahrirTest
 
@@ -149,8 +153,19 @@ class TestDBInit(BaseTahrirTest):
         badge = self.api.get_badge(badge_id)
         assert_that(badge,
                     has_property('assertions', has_length(1)))
-        assert_that(badge.assertions[0],
+        assertion = badge.assertions[0]
+        repr(assertion)  # coverage
+        assert_that(assertion,
                     has_property('issued_for', is_('link')))
+        assert_that(str(assertion),
+                    is_('TestBadge<->test@tester.com'))
+        assert_that(assertion,
+                    has_property('_recipient', starts_with('sha256$')))
+
+        with self.assertRaises(KeyError):
+            assertion['key']
+        assert_that(assertion['pygments'],
+                    is_(instance_of(six.string_types)))
 
         # Ensure that we would have published two fedmsg messages for that.
         assert_that(self.callback_calls, has_length(2))

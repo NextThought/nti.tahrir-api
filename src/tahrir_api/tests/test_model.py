@@ -225,3 +225,38 @@ class TestModel(BaseTahrirTest):
         invitation = self.api.get_invitation(inv_id)
         assert_that(invitation,
                     has_property('created_by', is_(person.id)))
+
+    def test_authorization(self):
+        issuer_id = self.api.add_issuer(
+            "http://bleach.org",
+            "aizen",
+            "Bleach",
+            "aizen@bleach.org"
+        )
+
+        badge_id = self.api.add_badge(
+            "kido",
+            "kido",
+            "A test badge for doing kido",
+            "kido-expert",
+            issuer_id,
+        )
+        assert_that(self.api.add_authorization(badge_id, 'hinamori@bleach.org'),
+                    is_(False))
+        
+        self.api.add_person("hinamori@bleach.org", "hinamori")
+        assert_that(self.api.add_authorization(badge_id, 'hinamori@bleach.org'),
+                    is_(('hinamori@bleach.org', badge_id)))
+        
+        assert_that(self.api.authorization_exists(badge_id, 'hinamori@bleach.org'),
+                    is_(True))
+
+        assert_that(self.api.authorization_exists(badge_id, 'ichigo@bleach.org'),
+                    is_(False))
+        
+        auth = self.api.get_authorization(badge_id, 'ichigo@bleach.org')
+        assert_that(auth, is_(none()))
+
+        auth = self.api.get_authorization(badge_id, 'hinamori@bleach.org')
+        assert_that(auth, is_not(none()))
+        repr(auth)
