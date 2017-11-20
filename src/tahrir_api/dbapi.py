@@ -15,6 +15,7 @@ from collections import OrderedDict
 from sqlalchemy import and_
 from sqlalchemy import not_
 from sqlalchemy import func
+from sqlalchemy import exists
 from sqlalchemy import create_engine
 
 from sqlalchemy.orm import sessionmaker
@@ -754,6 +755,17 @@ class TahrirDatabase(object):
         """
         return self.session.query(Assertion)
 
+    def get_assertion_by_id(self, assertion_id):
+        """
+        Get an assertion by its id
+        
+        :type assertion_id: str
+        :param assertion_id: Assertion identifier
+        """
+        query = self.session.query(Assertion).filter_by(id=assertion_id)
+        result = query.scalar()
+        return result
+
     def get_assertions_by_email(self, person_email):
         """
         Get all assertions attached to the given email
@@ -779,8 +791,8 @@ class TahrirDatabase(object):
             return self.session.query(Assertion) \
                        .filter(func.lower(Assertion.badge_id) == func.lower(badge_id)).all()
         return ()
-
-    def assertion_exists(self, badge_id, email):
+  
+    def assertion_exists(self, badge_id=None, email=None, nickname=None, assertion_id=None):
         """
         Check if an assertion exists in the database
 
@@ -788,13 +800,31 @@ class TahrirDatabase(object):
         :param badge_id: ID of the badge
 
         :type email: str
-        :param email: users email
+        :param email: user email
+        
+        :type nickname: str
+        :param email: user nickname
+        
+        :type assertion_id: str
+        :param assertion_id: assertion identifier
         """
-        person = self.get_person(email)
-        if not person:
-            return False
-        return self.session.query(Assertion) \
-                   .filter_by(person_id=person.id, badge_id=badge_id).count() != 0
+        if assertion_id is not None:
+            query = self.session.query(
+                exists().where(Assertion.id == assertion_id)
+            )
+            result = query.scalar()
+        else:
+            assert badge_id is not None
+            person = self.get_person(email) \
+                  or self.get_person(nickname=nickname)
+            if person is None:
+                result = False
+            else:
+                result = self.session.query(exists().where(
+                    and_(func.lower(Assertion.person_id) == func.lower(person.id),
+                         func.lower(Assertion.badge_id) == func.lower(badge_id)))
+                ).scalar()
+        return result
 
     def authorization_exists(self, badge_id, email):
         """

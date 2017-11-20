@@ -245,6 +245,10 @@ class TestDBInit(BaseTahrirTest):
         assert_that(assertion,
                     has_property('_recipient', starts_with('sha256$')))
 
+        assertion_id = assertion.id
+        assert_that(self.api.get_assertion_by_id(assertion_id),
+                    is_not(none()))
+
         with self.assertRaises(KeyError):
             assertion['key']
         assert_that(assertion['pygments'],
@@ -258,6 +262,9 @@ class TestDBInit(BaseTahrirTest):
                     is_in(self.callback_calls[0][1]['msg']['badge']))
 
         assert_that(self.api.assertion_exists(badge_id, "test2@tester.org"),
+                    is_(False))
+        
+        assert_that(self.api.assertion_exists(assertion_id='xxx'),
                     is_(False))
         
         assert_that(self.api.add_assertion('xxxx', "test2@tester.org", None, 'link'),
