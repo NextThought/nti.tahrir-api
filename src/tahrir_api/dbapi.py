@@ -566,6 +566,18 @@ class TahrirDatabase(object):
         return False
 
     @autocommit
+    def update_person(self, person_id, email=None, nickname=None, 
+                      website=None, bio=None):
+        data = {"website": website, "bio": bio}
+        if email:
+            data["email"] = email
+        if nickname:
+            data["nickname"] = nickname
+        result = self.session.query(Person) \
+                     .filter_by(id=person_id).update(data)
+        return result
+
+    @autocommit
     def note_login(self, person_email=None, id=None, nickname=None):
         """ 
         Make a note that a person has logged in. 

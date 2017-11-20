@@ -142,6 +142,11 @@ class TestDBInit(BaseTahrirTest):
         assert_that(self.api.delete_person('test2@tester.org'),
                     is_(False))
         
+        self.api.update_person(person_id, email='test@tester.com',
+                               nickname='the_other_tester')
+        person = self.api.get_person(nickname="the_other_tester")
+        assert_that(person, is_not(none()))
+
         assert_that(self.api.delete_person('test@tester.com'),
                     is_('test@tester.com'))
 
