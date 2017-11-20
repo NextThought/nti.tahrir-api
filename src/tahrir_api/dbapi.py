@@ -808,13 +808,13 @@ class TahrirDatabase(object):
         :type assertion_id: str
         :param assertion_id: assertion identifier
         """
+        result = False
         if assertion_id is not None:
             query = self.session.query(
                 exists().where(Assertion.id == assertion_id)
             )
             result = query.scalar()
-        else:
-            assert badge_id is not None
+        elif badge_id:
             person = self.get_person(email) \
                   or self.get_person(nickname=nickname)
             if person is None:
