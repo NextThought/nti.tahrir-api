@@ -1,4 +1,5 @@
-"""add last login
+"""
+add last login
 
 Revision ID: 4099fa344171
 Revises: 139ec7ed17b7
@@ -6,11 +7,16 @@ Create Date: 2013-10-24 10:13:45.104902
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '4099fa344171'
 down_revision = '139ec7ed17b7'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

@@ -1,4 +1,5 @@
-"""Add tags field to badges.
+"""
+Add tags field to badges.
 
 Revision ID: 5791a2b9fb6a
 Revises: 39583332f4ea
@@ -6,11 +7,16 @@ Create Date: 2013-06-10 13:05:40.130328
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '5791a2b9fb6a'
 down_revision = '39583332f4ea'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

@@ -1,10 +1,15 @@
-"""Create new tables for Quest
+"""
+Create new tables for Quest
 
 Revision ID: e7040e76728
 Revises: 508367dcbbb5
 Create Date: 2016-09-02 20:51:14.951460
 
 """
+
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # revision identifiers, used by Alembic.
 revision = 'e7040e76728'
@@ -13,10 +18,13 @@ down_revision = '508367dcbbb5'
 import datetime
 
 from alembic import op
+
 import sqlalchemy as sa
+
 
 def generate_default_id(context):
     return context.current_parameters['name'].lower().replace(' ', '-')
+
 
 def upgrade():
 
@@ -62,7 +70,6 @@ def upgrade():
 
 
 def downgrade():
-
     op.drop_table('milestone')
     op.drop_table('series')
     op.drop_table('team')

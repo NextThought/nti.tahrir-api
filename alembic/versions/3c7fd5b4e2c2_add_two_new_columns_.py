@@ -1,4 +1,5 @@
-"""Add two new columns for Person.
+"""
+Add two new columns for Person.
 
 Revision ID: 3c7fd5b4e2c2
 Revises: 24282792d72a
@@ -6,14 +7,21 @@ Create Date: 2013-06-26 14:46:28.361709
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '3c7fd5b4e2c2'
 down_revision = '16943d9088cf'
 
-import tahrir_api
-from alembic import op
-import sqlalchemy as sa
 import datetime
+
+from alembic import op
+
+import tahrir_api
+
+import sqlalchemy as sa
 
 
 def upgrade():
