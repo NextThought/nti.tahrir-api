@@ -1,4 +1,5 @@
-"""Add created_on field to badges table.
+"""
+Add created_on field to badges table.
 
 Revision ID: 420c02357a1b
 Revises: None
@@ -6,11 +7,16 @@ Create Date: 2013-06-09 22:23:32.519635
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '420c02357a1b'
 down_revision = None
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

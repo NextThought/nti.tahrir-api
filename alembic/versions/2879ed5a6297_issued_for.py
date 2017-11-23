@@ -1,4 +1,5 @@
-"""issued_for
+"""
+issued_for
 
 Revision ID: 2879ed5a6297
 Revises: ce541796a7
@@ -6,11 +7,16 @@ Create Date: 2014-03-04 11:04:31.024949
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '2879ed5a6297'
 down_revision = 'ce541796a7'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

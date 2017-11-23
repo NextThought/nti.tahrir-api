@@ -1,4 +1,5 @@
-"""fix foreign key mismatch
+"""
+fix foreign key mismatch
 
 Revision ID: 16943d9088cf
 Revises: 24282792d72a
@@ -6,11 +7,16 @@ Create Date: 2013-06-23 22:55:47.775736
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '16943d9088cf'
 down_revision = '24282792d72a'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

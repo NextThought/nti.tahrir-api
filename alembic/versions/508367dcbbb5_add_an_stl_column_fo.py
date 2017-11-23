@@ -1,4 +1,5 @@
-"""Add an stl column for badges.
+"""
+Add an stl column for badges.
 
 Revision ID: 508367dcbbb5
 Revises: 2879ed5a6297
@@ -6,11 +7,16 @@ Create Date: 2014-07-11 09:36:33.211281
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = '508367dcbbb5'
 down_revision = '2879ed5a6297'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 

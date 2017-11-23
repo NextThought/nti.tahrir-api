@@ -1,4 +1,5 @@
-"""add authz table
+"""
+add authz table
 
 Revision ID: ce541796a7
 Revises: 4099fa344171
@@ -6,11 +7,16 @@ Create Date: 2013-12-13 15:30:16.576871
 
 """
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 # revision identifiers, used by Alembic.
 revision = 'ce541796a7'
 down_revision = '4099fa344171'
 
 from alembic import op
+
 import sqlalchemy as sa
 
 
