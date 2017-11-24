@@ -55,7 +55,6 @@ setup(
         'setuptools',
         'alembic',
         'arrow',
-        'pastedeploy',
         'pygments',
         'simplejson',
         'six',
