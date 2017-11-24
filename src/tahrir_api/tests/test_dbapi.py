@@ -123,7 +123,7 @@ class TestDBInit(BaseTahrirTest):
 
         assert_that(self.api.add_person("test@tester.com", "the_main_tester"),
                     is_(False))
-        
+
         assert_that(self.api.person_exists(),
                     is_(False))
 
@@ -132,16 +132,16 @@ class TestDBInit(BaseTahrirTest):
 
         assert_that(self.api.person_opted_out('test@tester.com'),
                     is_(False))
-        
+
         assert_that(list(self.api.get_all_persons()),
                     has_length(1))
-        
+
         assert_that(self.api.get_person_email('xxx'),
                     is_(none()))
-        
+
         assert_that(self.api.delete_person('test2@tester.org'),
                     is_(False))
-        
+
         self.api.update_person(person_id, email='test@tester.com',
                                nickname='the_other_tester')
         person = self.api.get_person(nickname="the_other_tester")
@@ -159,10 +159,10 @@ class TestDBInit(BaseTahrirTest):
         )
         assert_that(self.api.issuer_exists("TestOrigin", "TestName"),
                     is_(True))
-        
+
         assert_that(self.api.delete_issuer('xxxx'),
                     is_(False))
-    
+
         other_id = self.api.add_issuer(
             "TestOrigin",
             "TestName",
@@ -170,7 +170,7 @@ class TestDBInit(BaseTahrirTest):
             "TestContact"
         )
         assert_that(other_id, is_(equal_to(issuer_id)))
-        
+
         assert_that(list(self.api.get_all_issuers()),
                     has_length(1))
 
@@ -220,7 +220,7 @@ class TestDBInit(BaseTahrirTest):
 
         assert_that(list(self.api.get_all_assertions()),
                     has_length(1))
-        
+
         assert_that(list(self.api.get_assertions_by_email("test@tester.com")),
                     has_length(1))
 
@@ -263,10 +263,10 @@ class TestDBInit(BaseTahrirTest):
 
         assert_that(self.api.assertion_exists(badge_id, "test2@tester.org"),
                     is_(False))
-        
+
         assert_that(self.api.assertion_exists(assertion_id='xxx'),
                     is_(False))
-        
+
         assert_that(self.api.add_assertion('xxxx', "test2@tester.org", None, 'link'),
                     is_(False))
 

@@ -353,14 +353,17 @@ class TahrirDatabase(object):
             # ... by doing argument-expansion on a list comprehension
             badges.extend(
                 self.session.query(Badge)
-                    .filter(and_(*[func.lower(Badge.tags).contains(str(tag + ',').lower())
-                                   for tag in tags or ()]))
+                    .filter(
+                        and_(*[func.lower(Badge.tags).contains(str(tag + ',').lower())
+                               for tag in tags or ()]))
             )
         else:
             # Return badges matching any of the tags
             for tag in tags or ():
-                badges.extend(self.session.query(Badge)
-                              .filter(func.lower(Badge.tags).contains(str(tag + ',').lower())).all())
+                badges.extend(
+                    self.session.query(Badge).filter(
+                        func.lower(Badge.tags).contains(str(tag + ',').lower())
+                    ).all())
 
         # Eliminate any duplicates.
         unique_badges = list()
@@ -450,16 +453,18 @@ class TahrirDatabase(object):
         """
         query = self.session.query(Person)
         if email:
-            return query.filter(func.lower(Person.email) == func.lower(email)).count() != 0
+            return query.filter(func.lower(Person.email) == func.lower(email)) \
+                        .count() != 0
         elif id:
             return query.filter_by(id=id).count() != 0
         elif nickname:
-            return query.filter(func.lower(Person.nickname) == func.lower(nickname)).count() != 0
+            return query.filter(func.lower(Person.nickname) == func.lower(nickname)) \
+                        .count() != 0
         return False
 
     def person_opted_out(self, email=None, id=None, nickname=None):
-        """ 
-        Returns true if a given person has opted out of tahrir. 
+        """
+        Returns true if a given person has opted out of tahrir.
         """
         person = self.get_person(email, id, nickname)
         # If they don't exist, then they haven't opted out.
@@ -493,7 +498,8 @@ class TahrirDatabase(object):
         """
         if self.person_exists(id=person_id):
             return self.session.query(Person) \
-                       .filter(func.lower(Person.id) == func.lower(person_id)).one().email
+                       .filter(func.lower(Person.id) == func.lower(person_id)) \
+                       .one().email
         return None
 
     def get_person(self, person_email=None, id=None, nickname=None):
@@ -514,11 +520,13 @@ class TahrirDatabase(object):
         query = self.session.query(Person)
 
         if person_email and self.person_exists(email=person_email):
-            return query.filter(func.lower(Person.email) == func.lower(person_email)).one()
+            return query.filter(
+                        func.lower(Person.email) == func.lower(person_email)).one()
         elif id and self.person_exists(id=id):
             return query.filter_by(id=id).one()
         elif nickname and self.person_exists(nickname=nickname):
-            return query.filter(func.lower(Person.nickname) == func.lower(nickname)).one()
+            return query.filter(
+                        func.lower(Person.nickname) == func.lower(nickname)).one()
         return None
 
     @autocommit
@@ -567,7 +575,7 @@ class TahrirDatabase(object):
         return False
 
     @autocommit
-    def update_person(self, person_id, email=None, nickname=None, 
+    def update_person(self, person_id, email=None, nickname=None,
                       website=None, bio=None):
         data = {"website": website, "bio": bio}
         if email:
@@ -580,8 +588,8 @@ class TahrirDatabase(object):
 
     @autocommit
     def note_login(self, person_email=None, id=None, nickname=None):
-        """ 
-        Make a note that a person has logged in. 
+        """
+        Make a note that a person has logged in.
         """
         person = self.get_person(person_email, id, nickname)
         # If this is the first time they have ever logged in, optionally
@@ -606,7 +614,8 @@ class TahrirDatabase(object):
         :type issuer_id: int
         :param issuer_id: The unique ID of this issuer
         """
-        return self.session.query(Issuer).filter_by(origin=origin, name=name).count() != 0
+        return self.session.query(Issuer) \
+                   .filter_by(origin=origin, name=name).count() != 0
 
     @autocommit
     def add_invitation(self, badge_id, created_on=None, expires_on=None,
@@ -758,7 +767,7 @@ class TahrirDatabase(object):
     def get_assertion_by_id(self, assertion_id):
         """
         Get an assertion by its id
-        
+
         :type assertion_id: str
         :param assertion_id: Assertion identifier
         """
@@ -789,9 +798,10 @@ class TahrirDatabase(object):
         """
         if self.badge_exists(badge_id):
             return self.session.query(Assertion) \
-                       .filter(func.lower(Assertion.badge_id) == func.lower(badge_id)).all()
+                       .filter(func.lower(Assertion.badge_id) == func.lower(badge_id)) \
+                       .all()
         return ()
-  
+
     def assertion_exists(self, badge_id=None, email=None, nickname=None, assertion_id=None):
         """
         Check if an assertion exists in the database
@@ -801,10 +811,10 @@ class TahrirDatabase(object):
 
         :type email: str
         :param email: user email
-        
+
         :type nickname: str
         :param email: user nickname
-        
+
         :type assertion_id: str
         :param assertion_id: assertion identifier
         """

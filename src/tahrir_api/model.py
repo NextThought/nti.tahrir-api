@@ -195,7 +195,7 @@ class Series(DeclarativeBase):
                           default=datetime.datetime.utcnow,
                           onupdate=datetime.datetime.utcnow)
     tags = Column(Unicode(128))
- 
+
     milestone = relationship("Milestone", backref="series")
 
     team_id = Column(Unicode(128), ForeignKey('team.id'), nullable=False)
@@ -218,7 +218,7 @@ class Series(DeclarativeBase):
 
 
 class Milestone(DeclarativeBase):
-    
+
     __tablename__ = 'milestone'
 
     __table_args__ = (
