@@ -36,6 +36,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
+# pylint: disable=no-name-in-module
 from sqlalchemy.types import Boolean
 from sqlalchemy.types import Integer
 
@@ -75,6 +76,7 @@ class Issuer(DeclarativeBase):
     __unicode__ = __str__
 
     def __json__(self):
+        # pylint: disable=not-callable
         return dict(
             org=self.org,
             name=self.name,
@@ -127,6 +129,7 @@ class Badge(DeclarativeBase):
     __unicode__ = __str__
 
     def __json__(self):
+        # pylint: disable=not-callable
         image = self.image
         image = "/pngs/" + image if not image.startswith("http") else image
         return dict(
