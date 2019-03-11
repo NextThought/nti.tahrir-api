@@ -17,6 +17,7 @@ from sqlalchemy import not_
 from sqlalchemy import func
 from sqlalchemy import exists
 from sqlalchemy import create_engine
+from sqlalchemy import text
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -1008,7 +1009,7 @@ class TahrirDatabase(object):
                 .filter(Assertion.issued_on <= stop)
 
         leaderboard = leaderboard \
-            .order_by('count_1 desc')\
+            .order_by(text('count_1 desc'))\
             .filter(not_(Person.opt_out))\
             .group_by(Person)\
             .all()
