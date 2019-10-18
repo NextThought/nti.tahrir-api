@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Module to keep random utils. 
+Module to keep random utils.
 
 .. $Id$
 """
@@ -40,12 +40,12 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.types import Boolean
 from sqlalchemy.types import Integer
 
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 from tahrir_api.utils import bytes_
 
 DeclarativeBase = declarative_base()
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
+DBSession = register(scoped_session(sessionmaker()))
 DeclarativeBase.query = DBSession.query_property()
 
 
@@ -144,8 +144,8 @@ class Badge(DeclarativeBase):
         )
 
     def authorized(self, person):
-        """ 
-        Return true if a given person is authorized to admin a badge 
+        """
+        Return true if a given person is authorized to admin a badge
         """
         for authz in self.authorizations:
             if authz.person == person:
@@ -309,7 +309,7 @@ def invitation_id_default(context):
 
 
 class Invitation(DeclarativeBase):
-    """ 
+    """
     This is a temporary invitation to receive a badge.
 
     The idea is that a user can create a "You made my day" badge, and
