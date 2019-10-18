@@ -45,7 +45,8 @@ from zope.sqlalchemy import register
 from tahrir_api.utils import bytes_
 
 DeclarativeBase = declarative_base()
-DBSession = register(scoped_session(sessionmaker()))
+DBSession = scoped_session(sessionmaker())
+register(DBSession)
 DeclarativeBase.query = DBSession.query_property()
 
 
