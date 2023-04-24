@@ -46,7 +46,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    url="https://github.com/NextThought/nti.tahrir-api",
+    url="https://github.com/OpenNTI/nti.tahrir-api",
     zip_safe=True,
     packages=find_packages("src"),
     package_dir={'': 'src'},
